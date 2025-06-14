@@ -10,6 +10,21 @@ A Django REST API for managing weekly schedules with time slots and associated I
 - Time slot validation
 - Weekly schedule grouping by day
 
+## Requirements
+
+- Python 3.10 or higher
+- pip (latest version recommended)
+- virtualenv or Poetry (optional but recommended)
+
+## Installation
+
+0. **Ensure Python 3.10+ is installed**
+
+   Django 5.2.3 requires **Python 3.10 or above**. You can check your current version with:
+
+   ```bash
+   python --version
+
 ## Setup Instructions
 
 1. Create a virtual environment:
