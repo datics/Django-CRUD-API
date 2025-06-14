@@ -1,19 +1,23 @@
+from datetime import datetime
+
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
+
 from .models import TimeSlot, Schedule
 from .serializers import TimeSlotSerializer, ScheduleSerializer
-from datetime import datetime
+
 
 class TimeSlotViewSet(viewsets.ModelViewSet):
     queryset = TimeSlot.objects.all()
     serializer_class = TimeSlotSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=['get'])
     def get_weekly_schedule(self, request):
@@ -89,4 +93,26 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         """Return a flat list of all `TimeSlot` objects."""
         slots = TimeSlot.objects.all().order_by('day', 'start_time')
         serializer = TimeSlotSerializer(slots, many=True)
+        return Response(serializer.data)
+    
+
+    @action(detail=False, methods=['put'],
+            url_path=r'update-time-slot',
+            permission_classes=[permissions.IsAuthenticated])
+    def update_time_slot(self, request):
+        instance = get_object_or_404(TimeSlot, pk=request.data['id'])
+        serializer = TimeSlotSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+
+    @action(detail=False, methods=['put'],
+            url_path=r'update-weekly-schedule',
+            permission_classes=[permissions.IsAuthenticated])
+    def update_weekly_schedule(self, request):
+        instance = get_object_or_404(Schedule, pk=request.data['id'])
+        serializer = ScheduleSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
